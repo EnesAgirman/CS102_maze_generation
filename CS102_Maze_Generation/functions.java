@@ -1,17 +1,34 @@
-public class functions {
+import java.util.ArrayList;
 
+public class maze {
     Integer MAZE_HEIGHT;
     Integer MAZE_WIDTH;
 
-    Integer[] visitedXLocations;
-    Integer[] visitedYLocations;
+    //Integer[] visitedXLocations;
+    //Integer[] visitedYLocations;
+    
+    ArrayList<Integer> visitedXLocations;
+    ArrayList<Integer> visitedYLocations; 
 
-    Integer currentXLocation = 0;
-    Integer currentYLocation = 0;
+    ArrayList<Integer> v = new ArrayList<Integer>();
+
+    Integer currentXLocation;
+    Integer currentYLocation;
+
+    char[][] maze;
     
     
-    functions(){
-
+    maze(Integer aMAZE_HEIGHT, Integer aMAZE_WIDTH){
+        MAZE_HEIGHT = aMAZE_HEIGHT*4;
+        MAZE_WIDTH = aMAZE_WIDTH*4;
+        maze = generateEmptyMaze(aMAZE_HEIGHT, aMAZE_WIDTH);
+        visitedXLocations = new ArrayList<Integer>();
+        visitedYLocations = new ArrayList<Integer>();
+        currentXLocation = 2;
+        currentYLocation = 2;
+        visitedXLocations.add(currentXLocation);
+        visitedYLocations.add(currentYLocation);
+        
     }
 
 
@@ -21,9 +38,6 @@ public class functions {
 
         MAZE_HEIGHT = aMAZE_HEIGHT*4;
         MAZE_WIDTH = aMAZE_WIDTH*4;
-
-        visitedXLocations = new Integer[MAZE_WIDTH];
-        visitedYLocations = new Integer[MAZE_HEIGHT];
 
 
         char[][] maze = new char[MAZE_HEIGHT + 1][MAZE_WIDTH + 1];
@@ -38,9 +52,9 @@ public class functions {
 
             for (int j = 0; j < maze[0].length-1; j = j + 4) {
                 maze[i][j] = 'X';
-                maze[i][j+1] = '0';
-                maze[i][j+2] = '0';
-                maze[i][j+3] = '0';
+                maze[i][j+1] = 'O';
+                maze[i][j+2] = 'O';
+                maze[i][j+3] = 'O';
             }
             maze[i][maze[0].length-1] = 'X';
                             
@@ -60,21 +74,102 @@ public class functions {
     }
 
 
-    public void turnRight( Integer xLocation, Integer yLocation) {
-        if (xLocation > 0 && yLocation > 0 && xLocation < MAZE_WIDTH && yLocation < MAZE_HEIGHT) {
-            if (isXVisited(xLocation) == false) {
-                
-            }
+
+    public void moveRight() {
+
+        if (isMoveRightPossible(currentXLocation, currentYLocation)) {
+            maze[currentYLocation-1][currentXLocation + 2] = 'O';
+            maze[currentYLocation][currentXLocation + 2] = 'O';
+            maze[currentYLocation+1][currentXLocation + 2] = 'O';
+    
+            currentXLocation += 4;
+
+            visitedXLocations.add(currentXLocation);
+            visitedYLocations.add(currentYLocation);
 
         }
 
-        currentXLocation += 4;
+
     }
 
+    public void moveLeft() {
 
-    public boolean isXVisited( Integer aXLocation ) {
-        for (int i = 0; i < visitedXLocations.length; i++) {
-            if (visitedXLocations[i] == aXLocation ) {
+        if (isMoveleftPossible(currentXLocation, currentYLocation)) {
+            maze[currentYLocation-1][currentXLocation - 2] = 'O';
+            maze[currentYLocation][currentXLocation - 2] = 'O';
+            maze[currentYLocation+1][currentXLocation - 2] = 'O';
+    
+            currentXLocation -= 4;
+
+            visitedXLocations.add(currentXLocation);
+            visitedYLocations.add(currentYLocation);
+        }
+
+
+
+    }
+    public void moveUp() {
+
+        if (isMoveUpPossible(currentXLocation, currentYLocation)) {
+            maze[currentYLocation-2][currentXLocation - 1] = 'O';
+            maze[currentYLocation-2][currentXLocation] = 'O';
+            maze[currentYLocation-2][currentXLocation + 1] = 'O';
+    
+            currentYLocation -= 4;  
+            
+            visitedXLocations.add(currentXLocation);
+            visitedYLocations.add(currentYLocation);
+        }
+
+
+
+
+    }
+
+    public void moveDown() {
+
+        if (isMoveDownPossible(currentXLocation, currentYLocation)) {
+            maze[currentYLocation+2][currentXLocation - 1] = 'O';
+            maze[currentYLocation+2][currentXLocation] = 'O';
+            maze[currentYLocation+2][currentXLocation + 1] = 'O';
+    
+            currentYLocation += 4;
+
+            visitedXLocations.add(currentXLocation);
+            visitedYLocations.add(currentYLocation);
+        }
+
+
+
+    }
+
+    public boolean isMoveRightPossible(Integer xLocation, Integer yLocation) {
+        if (xLocation + 4 > 0 && yLocation > 0 && xLocation + 4 < MAZE_WIDTH && yLocation < MAZE_HEIGHT) {
+            if (isXVisited(xLocation + 4) == false || isYVisited(yLocation) == false) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean isMoveleftPossible(Integer xLocation, Integer yLocation) {
+        if (xLocation - 4 > 0 && yLocation > 0 && xLocation - 4 < MAZE_WIDTH && yLocation < MAZE_HEIGHT) {
+            if (isXVisited(xLocation - 4) == false || isYVisited(yLocation) == false) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean isMoveUpPossible(Integer xLocation, Integer yLocation) {
+        if (xLocation > 0 && yLocation - 4 > 0 && xLocation < MAZE_WIDTH && yLocation - 4 < MAZE_HEIGHT) {
+            if (isYVisited(yLocation - 4) == false || isXVisited(xLocation) == false) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean isMoveDownPossible(Integer xLocation, Integer yLocation) {
+        if (xLocation > 0 && yLocation + 4 > 0 && xLocation < MAZE_WIDTH && yLocation + 4 < MAZE_HEIGHT) {
+            if (isYVisited(yLocation + 4) == false || isXVisited(xLocation) == false) {
                 return true;
             }
         }
@@ -82,14 +177,24 @@ public class functions {
     }
 
 
+    // checks if the given x or y posisition is visited before
 
+    public boolean isXVisited( Integer aXLocation ) {
+        for (int i = 0; i < visitedXLocations.size(); i++) {
+            if (visitedXLocations.get(i) == aXLocation ) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-
-
-
-
-
-
-
+    public boolean isYVisited( Integer aYLocation ) {
+        for (int i = 0; i < visitedYLocations.size(); i++) {
+            if (visitedYLocations.get(i) == aYLocation ) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
