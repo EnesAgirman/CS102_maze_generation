@@ -1,20 +1,41 @@
+import java.util.ArrayList;
+import java.util.Random;
+
 public class maze {
     Integer MAZE_HEIGHT;
     Integer MAZE_WIDTH;
 
-    Integer[] visitedXLocations;
-    Integer[] visitedYLocations;
+    ArrayList<ArrayList<Integer>> visitedLocations; 
 
-    Integer currentXLocation = 2;
-    Integer currentYLocation = 2;
+    ArrayList<Integer> v = new ArrayList<Integer>();
+
+    Integer currentXLocation;
+    Integer currentYLocation;
 
     char[][] maze;
+
+    Random rand = new Random();
+    
     
     
     maze(Integer aMAZE_HEIGHT, Integer aMAZE_WIDTH){
         MAZE_HEIGHT = aMAZE_HEIGHT*4;
         MAZE_WIDTH = aMAZE_WIDTH*4;
         maze = generateEmptyMaze(aMAZE_HEIGHT, aMAZE_WIDTH);
+
+        visitedLocations = new ArrayList<>();
+        currentXLocation = 2;
+        currentYLocation = 2;
+
+        addVisitedLocation(currentXLocation, currentYLocation);
+        
+    }
+
+    public void addVisitedLocation( Integer xLocation, Integer yLocation) {
+        ArrayList<Integer> visitedLocation = new ArrayList<Integer>();
+        visitedLocation.add(xLocation);
+        visitedLocation.add(yLocation);
+        visitedLocations.add(visitedLocation);
     }
 
 
@@ -24,9 +45,6 @@ public class maze {
 
         MAZE_HEIGHT = aMAZE_HEIGHT*4;
         MAZE_WIDTH = aMAZE_WIDTH*4;
-
-        visitedXLocations = new Integer[MAZE_WIDTH];
-        visitedYLocations = new Integer[MAZE_HEIGHT];
 
 
         char[][] maze = new char[MAZE_HEIGHT + 1][MAZE_WIDTH + 1];
@@ -66,38 +84,79 @@ public class maze {
 
     public void moveRight() {
 
-        currentXLocation += 4;
+        if (isMoveRightPossible(currentXLocation, currentYLocation)) {
+            maze[currentYLocation-1][currentXLocation + 2] = 'O';
+            maze[currentYLocation][currentXLocation + 2] = 'O';
+            maze[currentYLocation+1][currentXLocation + 2] = 'O';
+    
+            currentXLocation += 4;
+
+            addVisitedLocation(currentXLocation, currentYLocation);
+
+        }
+
 
     }
 
     public void moveLeft() {
 
-        currentXLocation -= 4;
+        if (isMoveLeftPossible(currentXLocation, currentYLocation)) {
+            maze[currentYLocation-1][currentXLocation - 2] = 'O';
+            maze[currentYLocation][currentXLocation - 2] = 'O';
+            maze[currentYLocation+1][currentXLocation - 2] = 'O';
+    
+            currentXLocation -= 4;
+
+            addVisitedLocation(currentXLocation, currentYLocation);
+        }
+
+
 
     }
     public void moveUp() {
 
-        currentYLocation -= 4;
+        if (isMoveUpPossible(currentXLocation, currentYLocation)) {
+            maze[currentYLocation-2][currentXLocation - 1] = 'O';
+            maze[currentYLocation-2][currentXLocation] = 'O';
+            maze[currentYLocation-2][currentXLocation + 1] = 'O';
+    
+            currentYLocation -= 4;  
+            
+            addVisitedLocation(currentXLocation, currentYLocation);
+        }
+
 
     }
 
     public void moveDown() {
 
-        currentYLocation += 4;
+        if (isMoveDownPossible(currentXLocation, currentYLocation)) {
+            maze[currentYLocation+2][currentXLocation - 1] = 'O';
+            maze[currentYLocation+2][currentXLocation] = 'O';
+            maze[currentYLocation+2][currentXLocation + 1] = 'O';
+    
+            currentYLocation += 4;
+
+            addVisitedLocation(currentXLocation, currentYLocation);
+        }
+
+
 
     }
 
     public boolean isMoveRightPossible(Integer xLocation, Integer yLocation) {
         if (xLocation + 4 > 0 && yLocation > 0 && xLocation + 4 < MAZE_WIDTH && yLocation < MAZE_HEIGHT) {
-            if (isXVisited(xLocation + 4) == false) {
+
+            if (isVisited(xLocation + 4, yLocation) == false) {
                 return true;
             }
         }
         return false;
     }
-    public boolean isMoveleftPossible(Integer xLocation, Integer yLocation) {
+    public boolean isMoveLeftPossible(Integer xLocation, Integer yLocation) {
         if (xLocation - 4 > 0 && yLocation > 0 && xLocation - 4 < MAZE_WIDTH && yLocation < MAZE_HEIGHT) {
-            if (isXVisited(xLocation - 4) == false) {
+
+            if (isVisited(xLocation - 4, yLocation) == false) {
                 return true;
             }
         }
@@ -105,7 +164,8 @@ public class maze {
     }
     public boolean isMoveUpPossible(Integer xLocation, Integer yLocation) {
         if (xLocation > 0 && yLocation - 4 > 0 && xLocation < MAZE_WIDTH && yLocation - 4 < MAZE_HEIGHT) {
-            if (isXVisited(yLocation - 4) == false) {
+
+            if (isVisited(xLocation, yLocation - 4) == false) {
                 return true;
             }
         }
@@ -113,7 +173,8 @@ public class maze {
     }
     public boolean isMoveDownPossible(Integer xLocation, Integer yLocation) {
         if (xLocation > 0 && yLocation + 4 > 0 && xLocation < MAZE_WIDTH && yLocation + 4 < MAZE_HEIGHT) {
-            if (isXVisited(yLocation + 4) == false) {
+
+            if (isVisited(xLocation, yLocation + 4) == false) {
                 return true;
             }
         }
@@ -121,13 +182,61 @@ public class maze {
     }
 
 
-    public boolean isXVisited( Integer aXLocation ) {
-        for (int i = 0; i < visitedXLocations.length; i++) {
-            if (visitedXLocations[i] == aXLocation ) {
+    // checks if the given x or y posisition is visited before
+
+    public boolean isVisited( Integer aXLocation, Integer aYLocation ) {
+        for (int i = 0; i < visitedLocations.size(); i++) {
+            if (visitedLocations.get(i).get(1) == aYLocation && visitedLocations.get(i).get(0) == aXLocation) {
                 return true;
             }
         }
         return false;
+        
     }
+
+    public void moveRandomly() {
+        
+        ArrayList<Character> choices = new ArrayList<Character>();
+
+        if (isMoveRightPossible(currentXLocation, currentYLocation)) {
+            choices.add('R');
+        }
+        if (isMoveLeftPossible(currentXLocation, currentYLocation)) {
+            choices.add('L');
+        }
+        if (isMoveUpPossible(currentXLocation, currentYLocation)) {
+            choices.add('U');
+        }
+        if (isMoveDownPossible(currentXLocation, currentYLocation)) {
+            choices.add('D');
+        }
+
+        if (choices.size() > 0) {
+            Character choice = choices.get(rand.nextInt(choices.size()));
+
+            if (choice == 'R') {
+                moveRight();
+            }
+            else if (choice == 'L') {
+                moveLeft();
+            }
+            else if (choice == 'U') {
+                moveUp();;
+            }
+            else if (choice == 'D') {
+                moveDown();;
+            }
+        }
+        
+                
+    }
+
+
+    // add this which returns if there exist a possible move from the current location or are we stuck.
+    public boolean thereIsAPossibleMove() {
+        return true;
+    }
+
+
 
 }
