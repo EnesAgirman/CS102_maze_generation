@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Random;
 
 public class maze {
     Integer MAZE_HEIGHT;
@@ -16,6 +17,9 @@ public class maze {
     Integer currentYLocation;
 
     char[][] maze;
+
+    Random rand = new Random();
+    
     
     
     maze(Integer aMAZE_HEIGHT, Integer aMAZE_WIDTH){
@@ -94,7 +98,7 @@ public class maze {
 
     public void moveLeft() {
 
-        if (isMoveleftPossible(currentXLocation, currentYLocation)) {
+        if (isMoveLeftPossible(currentXLocation, currentYLocation)) {
             maze[currentYLocation-1][currentXLocation - 2] = 'O';
             maze[currentYLocation][currentXLocation - 2] = 'O';
             maze[currentYLocation+1][currentXLocation - 2] = 'O';
@@ -120,8 +124,6 @@ public class maze {
             visitedXLocations.add(currentXLocation);
             visitedYLocations.add(currentYLocation);
         }
-
-
 
 
     }
@@ -151,7 +153,7 @@ public class maze {
         }
         return false;
     }
-    public boolean isMoveleftPossible(Integer xLocation, Integer yLocation) {
+    public boolean isMoveLeftPossible(Integer xLocation, Integer yLocation) {
         if (xLocation - 4 > 0 && yLocation > 0 && xLocation - 4 < MAZE_WIDTH && yLocation < MAZE_HEIGHT) {
             if (isXVisited(xLocation - 4) == false || isYVisited(yLocation) == false) {
                 return true;
@@ -196,5 +198,41 @@ public class maze {
         }
         return false;
     }
+
+    public void moveRandomly() {
+        
+        ArrayList<Character> choices = new ArrayList<Character>();
+
+        if (isMoveRightPossible(currentXLocation, currentYLocation)) {
+            choices.add('R');
+        }
+        if (isMoveLeftPossible(currentXLocation, currentYLocation)) {
+            choices.add('L');
+        }
+        if (isMoveUpPossible(currentXLocation, currentYLocation)) {
+            choices.add('U');
+        }
+        if (isMoveDownPossible(currentXLocation, currentYLocation)) {
+            choices.add('D');
+        }
+
+        Character choice = choices.get(rand.nextInt(choices.size()));
+
+        if (choice == 'R') {
+            moveRight();
+        }
+        else if (choice == 'L') {
+            moveLeft();
+        }
+        else if (choice == 'U') {
+            moveUp();;
+        }
+        else if (choice == 'D') {
+            moveDown();;
+        }
+                
+    }
+
+
 
 }
