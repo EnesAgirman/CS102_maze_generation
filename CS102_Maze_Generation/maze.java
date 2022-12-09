@@ -234,7 +234,11 @@ public class maze {
 
     // add this which returns if there exist a possible move from the current location or are we stuck.
     public boolean thereIsAPossibleMove() {
-        return true;
+        boolean result = isMoveRightPossible(currentXLocation, currentYLocation) ||
+         isMoveLeftPossible(currentXLocation, currentYLocation) || isMoveUpPossible(currentXLocation, currentYLocation) ||
+         isMoveDownPossible(currentXLocation, currentYLocation);
+
+        return result;
     }
 
 
