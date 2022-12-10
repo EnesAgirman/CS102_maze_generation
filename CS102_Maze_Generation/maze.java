@@ -21,7 +21,8 @@ public class maze {
     Random rand = new Random();
     
     
-    
+    // constructor that initializes variables, generates an empty map of given size, makes the intitial 
+    // position the upper left corner and add that location to visited locations
     maze(Integer aMAZE_HEIGHT, Integer aMAZE_WIDTH){
 
         XStack = new Stack<Integer>();
@@ -40,6 +41,8 @@ public class maze {
         
     }
 
+
+    // takes a location with x and y coordinates and adds that location to visited locations
     public void addVisitedLocation( Integer xLocation, Integer yLocation) {
         ArrayList<Integer> visitedLocation = new ArrayList<Integer>();
         visitedLocation.add(xLocation);
@@ -51,6 +54,8 @@ public class maze {
 
 
 
+    // this function generates an empty maze with walls in every possible location. 
+    // generateMaze function later is going to break some of the walls to create a maze.
     public char[][] generateEmptyMaze( Integer aMAZE_HEIGHT, Integer aMAZE_WIDTH ) {
 
 
@@ -93,6 +98,7 @@ public class maze {
 
 
 
+    // moves right: moves current location to one square right and breaks the walls in its way.
     public void moveRight() {
 
         if (isMoveRightPossible(currentXLocation, currentYLocation)) {
@@ -109,6 +115,7 @@ public class maze {
 
     }
 
+    // moves left: moves current location to one square left and breaks the walls in its way.
     public void moveLeft() {
 
         if (isMoveLeftPossible(currentXLocation, currentYLocation)) {
@@ -124,6 +131,8 @@ public class maze {
 
 
     }
+
+    // moves up: moves current location to one square up and breaks the walls in its way.
     public void moveUp() {
 
         if (isMoveUpPossible(currentXLocation, currentYLocation)) {
@@ -139,6 +148,7 @@ public class maze {
 
     }
 
+    // moves down: moves current location to one square down and breaks the walls in its way.
     public void moveDown() {
 
         if (isMoveDownPossible(currentXLocation, currentYLocation)) {
@@ -155,6 +165,8 @@ public class maze {
 
     }
 
+    // returns if moving to right possible. It is not possible if the location one square right of the 
+    // location given by the input coordinates is not in the boundries or is visited before
     public boolean isMoveRightPossible(Integer xLocation, Integer yLocation) {
         if (xLocation + 4 > 0 && yLocation > 0 && xLocation + 4 < MAZE_WIDTH && yLocation < MAZE_HEIGHT) {
 
@@ -164,6 +176,9 @@ public class maze {
         }
         return false;
     }
+
+    // returns if moving to left possible. It is not possible if the location one square left of the 
+    // location given by the input coordinates is not in the boundries or is visited before
     public boolean isMoveLeftPossible(Integer xLocation, Integer yLocation) {
         if (xLocation - 4 > 0 && yLocation > 0 && xLocation - 4 < MAZE_WIDTH && yLocation < MAZE_HEIGHT) {
 
@@ -173,6 +188,9 @@ public class maze {
         }
         return false;
     }
+
+    // returns if moving to up possible. It is not possible if the location one square up of the 
+    // location given by the input coordinates is not in the boundries or is visited before
     public boolean isMoveUpPossible(Integer xLocation, Integer yLocation) {
         if (xLocation > 0 && yLocation - 4 > 0 && xLocation < MAZE_WIDTH && yLocation - 4 < MAZE_HEIGHT) {
 
@@ -182,6 +200,9 @@ public class maze {
         }
         return false;
     }
+
+    // returns if moving to down possible. It is not possible if the location one square down of the 
+    // location given by the input coordinates is not in the boundries or is visited before   
     public boolean isMoveDownPossible(Integer xLocation, Integer yLocation) {
         if (xLocation > 0 && yLocation + 4 > 0 && xLocation < MAZE_WIDTH && yLocation + 4 < MAZE_HEIGHT) {
 
@@ -193,8 +214,7 @@ public class maze {
     }
 
 
-    // checks if the given x or y posisition is visited before
-
+    // checks if the given position with x and y coordinates is visited before
     public boolean isVisited( Integer aXLocation, Integer aYLocation ) {
         for (int i = 0; i < visitedLocations.size(); i++) {
             if (visitedLocations.get(i).get(1) == aYLocation && visitedLocations.get(i).get(0) == aXLocation) {
@@ -205,6 +225,8 @@ public class maze {
         
     }
 
+
+    // moveRandomly() function selects a random direction among possible movements and moves along that way
     public void moveRandomly() {
         
         ArrayList<Character> choices = new ArrayList<Character>();
@@ -243,7 +265,7 @@ public class maze {
     }
 
 
-    // add this which returns if there exist a possible move from the current location or are we stuck.
+    // returns if there exist a possible move from the current location or are we stuck.
     public boolean movingPossible() {
         boolean result = isMoveRightPossible(currentXLocation, currentYLocation) ||
          isMoveLeftPossible(currentXLocation, currentYLocation) || isMoveUpPossible(currentXLocation, currentYLocation) ||
@@ -253,6 +275,7 @@ public class maze {
     }
 
 
+    // returns a boolean indicating if we visited everywhere on the maze
     public boolean isEverywhereVisited() {
         if (visitedLocations.size() >= numberOfLocations) {
             return true;
@@ -260,6 +283,10 @@ public class maze {
         return false;
     }
 
+    //  generates the maze with recursive backtracking algorithm. It generates the maze by moving randomly and breaking the walls 
+    // along its way while doing that. When it's stuck at some locations, it goes back until it is not stuck and selects a 
+    // different route this time to break some more walls and go the unvisited places. When all of the places are visited, the
+    // maze is ready.
     public void generateMaze() {
         
         while (isEverywhereVisited() == false) {
@@ -267,8 +294,6 @@ public class maze {
                 moveRandomly();
             }
             else{
-                //currentXLocation = visitedLocations.get(visitedLocations.size()-2).get(0);
-                //currentYLocation = visitedLocations.get(visitedLocations.size()-2).get(1);
                 XStack.pop();
                 currentXLocation = XStack.peek();
 
