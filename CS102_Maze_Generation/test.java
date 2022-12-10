@@ -5,8 +5,6 @@ public class test {
     public static void main(String[] args) {
         
 
-        System.out.println("\n@@@@@@@@@@@@@@\nlerolerolerolerolerolero\n@@@@@@@@@@@@@@\n");
-
         // write the height and width of the maze you want to generate
         Integer MAZE_HEIGHT = 10;
         Integer MAZE_WIDTH = 10;
@@ -19,7 +17,7 @@ public class test {
         // this function generates the actual filled maze
         myMaze.generateMaze();
 
-        
+
         // displaying the maze
         for (int i = 0; i < maze.length; i++) {
             for (int j = 0; j < maze[0].length; j++) {
