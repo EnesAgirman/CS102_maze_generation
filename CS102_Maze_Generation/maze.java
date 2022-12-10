@@ -1,9 +1,13 @@
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Stack;
 
 public class maze {
     Integer MAZE_HEIGHT;
     Integer MAZE_WIDTH;
+    Integer numberOfLocations;
+    Stack<Integer> XStack;
+    Stack<Integer> YStack;
 
     ArrayList<ArrayList<Integer>> visitedLocations; 
 
@@ -19,6 +23,11 @@ public class maze {
     
     
     maze(Integer aMAZE_HEIGHT, Integer aMAZE_WIDTH){
+
+        XStack = new Stack<Integer>();
+        YStack = new Stack<Integer>();
+
+        numberOfLocations = aMAZE_HEIGHT * aMAZE_WIDTH;
         MAZE_HEIGHT = aMAZE_HEIGHT*4;
         MAZE_WIDTH = aMAZE_WIDTH*4;
         maze = generateEmptyMaze(aMAZE_HEIGHT, aMAZE_WIDTH);
@@ -36,6 +45,8 @@ public class maze {
         visitedLocation.add(xLocation);
         visitedLocation.add(yLocation);
         visitedLocations.add(visitedLocation);
+        XStack.push(xLocation);
+        YStack.push(yLocation);
     }
 
 
@@ -233,12 +244,40 @@ public class maze {
 
 
     // add this which returns if there exist a possible move from the current location or are we stuck.
-    public boolean thereIsAPossibleMove() {
+    public boolean movingPossible() {
         boolean result = isMoveRightPossible(currentXLocation, currentYLocation) ||
          isMoveLeftPossible(currentXLocation, currentYLocation) || isMoveUpPossible(currentXLocation, currentYLocation) ||
          isMoveDownPossible(currentXLocation, currentYLocation);
 
         return result;
+    }
+
+
+    public boolean isEverywhereVisited() {
+        if (visitedLocations.size() >= numberOfLocations) {
+            return true;
+        }
+        return false;
+    }
+
+    public void generateMaze() {
+        
+        while (isEverywhereVisited() == false) {
+            if (movingPossible()) {
+                moveRandomly();
+            }
+            else{
+                //currentXLocation = visitedLocations.get(visitedLocations.size()-2).get(0);
+                //currentYLocation = visitedLocations.get(visitedLocations.size()-2).get(1);
+                XStack.pop();
+                currentXLocation = XStack.peek();
+
+                YStack.pop();
+                currentYLocation = YStack.peek();
+
+                moveRandomly();
+            }
+        }
     }
 
 
